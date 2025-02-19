@@ -38,7 +38,6 @@ export const followUnfollowUser = async (req, res) => {
       //Unfollow the user
       await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
       await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
-      //Todo return the id of the user as a response
       res.status(200).json({ message: "User unfollowed successfully" });
     } else {
       //Follow the user
@@ -53,8 +52,6 @@ export const followUnfollowUser = async (req, res) => {
       });
 
       await newNotification.save();
-
-      //Todo return the id of the user as a response
       res.status(200).json({ message: "User followed successfully" });
     }
   } catch (error) {
@@ -92,7 +89,6 @@ export const getSuggestedUsers = async (req, res) => {
   }
 };
 
-
 export const updateUser = async (req, res) => {
   const { fullName, email, username, currentPassword, newPassword, bio, link } =
     req.body;
@@ -108,11 +104,9 @@ export const updateUser = async (req, res) => {
       (!newPassword && currentPassword) ||
       (!currentPassword && newPassword)
     ) {
-      return res
-        .status(400)
-        .json({
-          error: "Please provide both current password and new password",
-        });
+      return res.status(400).json({
+        error: "Please provide both current password and new password",
+      });
     }
 
     if (currentPassword && newPassword) {
