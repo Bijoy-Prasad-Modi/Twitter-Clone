@@ -1,6 +1,7 @@
 import Notification from "../models/notificationModel.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import {v2 as cloudinary} from "cloudinary";
 
 //we gonna be using this function when we visit a user profile, where we see their name, username, member since, number of followers, following etc
 export const getUserProfile = async (req, res) => {
