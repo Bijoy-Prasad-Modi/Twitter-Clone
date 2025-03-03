@@ -2,15 +2,17 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
+import cors from "cors";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js"
-import notificationRoutes from "./routes/notificationRoutes.js"
+import postRoutes from "./routes/postRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,7 +23,16 @@ cloudinary.config({
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json({limit:"5mb"})); //keeping limit small to avoid DOS attack
+
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_URL],
+    method: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, //Connection b/w frontend and backend
+  })
+);
+
+app.use(express.json({ limit: "5mb" })); //keeping limit small to avoid DOS attack
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
