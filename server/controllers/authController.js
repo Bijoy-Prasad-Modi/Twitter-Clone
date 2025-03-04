@@ -69,14 +69,13 @@ export const login = async (req, res) => {
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
     if (!isPasswordCorrect) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
 
     generateTokenAndSetCookie(user._id, res);
 
-    const { password: _, ...userWithoutPassword } = user._doc;
+    const { password: _, ...userWithoutPassword } = user.toObject();
 
     res.status(200).json({
       message: "Login successful",
@@ -95,10 +94,15 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.cookie("jwt", "", { maxAge: 0 });
+    res.cookie("jwt", "", {
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "development",
+    });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    console.log("Error in logout controller", error.message);
+    console.error("Error in logout controller", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -112,3 +116,7 @@ export const getMe = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+//         sameSite: "strict", // CSRF attacks cross-site request forgery attacks
+//         secure: process.env.NODE_ENV !== "development",
