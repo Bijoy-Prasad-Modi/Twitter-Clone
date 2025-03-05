@@ -7,15 +7,15 @@ const Posts = ({ feedType, username, userId }) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
-        return "/api/posts/all";
+        return "https://twitter-clone-c8hr.onrender.com/api/posts/all";
       case "following":
-        return "/api/posts/following";
+        return "https://twitter-clone-c8hr.onrender.com/api/posts/following";
       case "posts":
-        return `/api/posts/user/${username}`;
+        return `https://twitter-clone-c8hr.onrender.com/api/posts/user/${username}`;
       case "likes":
-        return `/api/posts/likes/${userId}`;
+        return `https://twitter-clone-c8hr.onrender.com/api/posts/likes/${userId}`;
       default:
-        return "/api/posts/all";
+        return "https://twitter-clone-c8hr.onrender.com/api/posts/all";
     }
   };
   const POST_ENDPOINT = getPostEndpoint();
