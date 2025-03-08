@@ -9,7 +9,7 @@ export const generateTokenAndSetCookie = (userId, res) => {
     maxAge: 15 * 24 * 60 * 60 * 1000, //15 days
     expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
     httpOnly: true, // Prevents client-side JS from accessing the token, prevent XSS attacks cross-site scripting attacks
-    sameSite: "strict", // Protects against CSRF (cross-site request forgery) attacks
-    secure: process.env.NODE_ENV !== "development", // Enables HTTPS-only in production
+    sameSite: "None", // Protects against CSRF (cross-site request forgery) attacks
+    secure: true, // Enables HTTPS-only in production
   });
 };
