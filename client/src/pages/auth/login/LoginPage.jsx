@@ -24,7 +24,7 @@ const LoginPage = () => {
     mutationFn: async ({ username, password }) => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
+          "https://twitter-clone-c8hr.onrender.com/api/auth/login",
           {
             method: "POST",
             credentials: "include",
