@@ -1,7 +1,7 @@
 {
   "name": "twitter-clone",
   "version": "1.0.0",
-  "main": "server/server.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"

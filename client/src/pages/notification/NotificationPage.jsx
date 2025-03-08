@@ -15,7 +15,7 @@ const NotificationPage = () => {
     queryKey: ["notifications"],
     queryFn: async () => {
       try {
-        const res = await fetch("https://twitter-clone-c8hr.onrender.com/api/notifications");
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/notifications`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Somthing went wrong");
         return data;
@@ -29,7 +29,7 @@ const NotificationPage = () => {
   const { mutate: deleteNotifications } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch("https://twitter-clone-c8hr.onrender.com/api/notifications", {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/notifications`, {
           method: "DELETE",
         });
         const data = await res.json();

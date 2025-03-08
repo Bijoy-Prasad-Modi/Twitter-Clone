@@ -8,7 +8,7 @@ const useUpdateUserProfile = () => {
     useMutation({
       mutationFn: async (formData) => {
         try {
-          const res = await fetch(`https://twitter-clone-c8hr.onrender.com/api/users/update`, {
+          const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/update`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

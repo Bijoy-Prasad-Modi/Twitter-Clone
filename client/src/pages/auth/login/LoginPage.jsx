@@ -23,21 +23,27 @@ const LoginPage = () => {
   } = useMutation({
     mutationFn: async ({ username, password }) => {
       try {
-        const res = await fetch("https://twitter-clone-c8hr.onrender.com/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ username, password }),
+          }
+        );
 
-        const data = await res.json();
-
+        // Check if response is OK before parsing JSON
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          const errorText = await res.text();
+          throw new Error(`Error ${res.status}: ${errorText}`);
         }
+
+        return await res.json(); // Parse JSON safely
       } catch (error) {
-        throw new Error(error);
+        throw new Error(error.message || "Network error, please try again.");
       }
     },
     onSuccess: () => {
@@ -87,8 +93,8 @@ const LoginPage = () => {
               value={formData.password}
             />
           </label>
-          <button className="btn rounded-full btn-primary text-white">
-            {isPending ? "Loading..." : "Login"}
+          <button className="btn rounded-full btn-primary text-white" disabled={isPending}>
+            {isPending ? "Logging in..." : "Login"}
           </button>
           {isError && <p className="text-red-500">{error.message}</p>}
         </form>

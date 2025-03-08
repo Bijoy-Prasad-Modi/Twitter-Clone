@@ -75,18 +75,18 @@ export const login = async (req, res) => {
 
     generateTokenAndSetCookie(user._id, res);
 
-    const { password: _, ...userWithoutPassword } = user._doc;
+    const { password: _, ...userWithoutPassword } = user.toObject();
 
     res.status(200).json({
       message: "Login successful",
       user: userWithoutPassword,
     });
   } catch (error) {
-    console.error("Error in login controller", error);
+    console.error("Error in login controller:", error);
     res.status(500).json({
       error:
-        process.env.NODE_ENV === "development"
-          ? error.message
+        process.env.NODE_ENV == "development"
+          ? `Internal Server Error: ${error.message}`
           : "Internal Server Error",
     });
   }
@@ -96,6 +96,7 @@ export const logout = async (req, res) => {
   try {
     res.cookie("jwt", "", {
       maxAge: 0,
+      expires: new Date(0),
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV !== "development",

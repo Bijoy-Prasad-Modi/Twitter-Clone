@@ -14,7 +14,7 @@ const Sidebar = () => {
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch("https://twitter-clone-c8hr.onrender.com/api/auth/logout", {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`, {
           method: "POST",
         });
         const data = await res.json();

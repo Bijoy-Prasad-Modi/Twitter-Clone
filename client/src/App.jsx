@@ -19,7 +19,14 @@ function App() {
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
-        const res = await fetch("https://twitter-clone-c8hr.onrender.com/api/auth/me");
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/me`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
         const data = await res.json();
         if (data.error) return null;
         if (!res.ok) {

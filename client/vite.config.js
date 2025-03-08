@@ -26,7 +26,7 @@ export default defineConfig({
   // server: {
   //   proxy: {
   //     "/api": {
-  //       target: "https://twitter-clone-c8hr.onrender.com",
+  //       target: "${import.meta.env.VITE_BASE_URL}",
   //       changeOrigin: true,
   //       secure: false,
   //     },
