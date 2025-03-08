@@ -75,7 +75,7 @@ export const login = async (req, res) => {
 
     generateTokenAndSetCookie(user._id, res);
 
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    const { password: _, ...userWithoutPassword } = user?.toObject() || {};
 
     res.status(200).json({
       message: "Login successful",
