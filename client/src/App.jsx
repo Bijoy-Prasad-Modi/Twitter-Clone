@@ -22,7 +22,7 @@ function App() {
         const res = await fetch(
           `${import.meta.env.VITE_BASE_URL}/api/auth/me`,
           {
-            method: "POST",
+            method: "GET",
             credentials: "include",
           }
         );

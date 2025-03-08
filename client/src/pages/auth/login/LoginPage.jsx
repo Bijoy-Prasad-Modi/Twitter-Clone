@@ -31,7 +31,7 @@ const LoginPage = () => {
               "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify({ username, password }),
+           // body: JSON.stringify({ username, password }),
           }
         );
 

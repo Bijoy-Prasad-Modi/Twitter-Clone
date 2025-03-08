@@ -13,11 +13,6 @@ import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 
-const allowedOrigins = [
-  "https://twitter-app-client-live.vercel.app",
-  "http://localhost:5173",
-];
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -31,10 +26,15 @@ const PORT = process.env.PORT || 5000;
 //     console.error("Failed to connect to MongoDB:", err);
 //   });
 
+app.options("*", cors()); // ✅ Handle preflight requests
+
 app.use(
   cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [
+      "https://twitter-app-client-live.vercel.app",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true, //Connection b/w frontend and backend, Allows cookies & authentication headers
   })
 );
