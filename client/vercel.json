@@ -5,8 +5,8 @@
       "source": "/api/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+          "key": "x-vercel-set-bypass-cookie",
+          "value": "samesitenone"
         }
       ]
     }
