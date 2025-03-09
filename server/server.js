@@ -16,50 +16,48 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// connectMongoDB()
-//   .then(() => {
-//     app.listen(PORT, () => {
-//       console.log(`Server is running on port ${PORT}`);
-//     });
-//   })
-//   .catch((err) => {
-//     console.error("Failed to connect to MongoDB:", err);
-//   });
-
-app.options("*", cors()); // ✅ Handle preflight requests
+//Improved CORS Configuration
+const allowedOrigins = [
+  "https://twitter-app-client-live.vercel.app", // Deployed frontend
+  "http://localhost:5173", // Local development
+];
 
 app.use(
   cors({
-    origin: [
-      "https://twitter-app-client-live.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin); // Allow valid origins
+      } else {
+        console.error(`Blocked CORS request from origin: ${origin}`);
+        callback(new Error("CORS Not Allowed"));
+      }
+    },
+    credentials: true, // Required to allow cookies
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    credentials: true, //Connection b/w frontend and backend, Allows cookies & authentication headers
   })
 );
 
-app.use(express.json({ limit: "5mb" })); //keeping limit small to avoid DOS attack
+//Express Middleware
+app.use(express.json({ limit: "5mb" })); // Prevent large request attacks
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Cloudinary Configuration Check
+//Cloudinary Configuration Handling
 if (
   !process.env.CLOUDINARY_CLOUD_NAME ||
   !process.env.CLOUDINARY_API_KEY ||
   !process.env.CLOUDINARY_API_SECRET
 ) {
-  console.error("Cloudinary environment variables are missing!");
-  process.exit(1);
+  console.warn("WARNING: Cloudinary environment variables are missing!");
+} else {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
 }
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Connecting to MongoDB before starting the server
+//Connecting to MongoDB before starting the server
 connectMongoDB()
   .then(() => {
     app.listen(PORT, () => {
@@ -70,19 +68,15 @@ connectMongoDB()
     console.error("Failed to connect to MongoDB:", err);
   });
 
-// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-// Global Error Handler at the End
 app.use((err, req, res, next) => {
-  console.error("Server Error:", err);
-  res.status(500).json({ error: "Internal Server Error" });
+  console.error(" Server Error:", err.message);
+  const statusCode = err.status || 500;
+  res.status(statusCode).json({
+    error: err.message || "Internal Server Error",
+  });
 });
-
-// app.listen(PORT, () => {
-//   console.log(`Server is up and running on port ${PORT}`);
-//   connectMongoDB();
-// });
