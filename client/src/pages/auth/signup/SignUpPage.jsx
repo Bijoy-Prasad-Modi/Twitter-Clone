@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -23,13 +24,16 @@ const SignUpPage = () => {
   const { mutate, isError, isPending, error } = useMutation({
     mutationFn: async ({ email, username, fullName, password }) => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/signup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, username, fullName, password }),
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, username, fullName, password }),
+          }
+        );
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to create account");
@@ -49,6 +53,10 @@ const SignUpPage = () => {
   //this will make sure page wouldn't reload
   const handleSubmit = (e) => {
     e.preventDefault(); // page won't reload
+    if (!isValidEmail(formData.email)) {
+      toast.error("Invalid email format");
+      return;
+    }
     mutate(formData);
   };
 

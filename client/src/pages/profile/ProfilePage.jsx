@@ -39,7 +39,9 @@ const ProfilePage = () => {
     queryKey: ["userProfile"],
     queryFn: async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/profile/${username}`);
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/users/profile/${username}`
+        );
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
@@ -213,7 +215,7 @@ const ProfilePage = () => {
                   </div>
                   <div className="flex gap-1 items-center">
                     <span className="font-bold text-xs">
-                      {user?.followers.length}
+                      {user?.followers?.length ?? 0}
                     </span>
                     <span className="text-slate-500 text-xs">Followers</span>
                   </div>

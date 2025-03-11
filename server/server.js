@@ -24,16 +24,10 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, origin); // Allow valid origins
-      } else {
-        console.error(`Blocked CORS request from origin: ${origin}`);
-        callback(new Error("CORS Not Allowed"));
-      }
-    },
-    credentials: true, // Required to allow cookies
+    origin: allowedOrigins,
+    credentials: true, // Allow cookies
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow JWT token
   })
 );
 

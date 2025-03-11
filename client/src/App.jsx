@@ -13,6 +13,8 @@ import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+
 function App() {
   const { data: authUser, isLoading } = useQuery({
     // we use queryKey to give a unique name to our query and refer to it later
@@ -20,7 +22,7 @@ function App() {
     queryFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/auth/me`,
+          `${BASE_URL}/api/auth/me`,
           {
             method: "GET",
             credentials: "include",

@@ -7,6 +7,10 @@
         {
           "key": "x-vercel-set-bypass-cookie",
           "value": "samesitenone"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
         }
       ]
     }

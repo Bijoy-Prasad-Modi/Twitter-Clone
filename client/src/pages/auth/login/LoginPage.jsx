@@ -24,7 +24,7 @@ const LoginPage = () => {
     mutationFn: async ({ username, password }) => {
       try {
         const res = await fetch(
-          "https://twitter-clone-c8hr.onrender.com/api/auth/login",
+          `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
           {
             method: "POST",
             credentials: "include",
@@ -93,7 +93,10 @@ const LoginPage = () => {
               value={formData.password}
             />
           </label>
-          <button className="btn rounded-full btn-primary text-white" disabled={isPending}>
+          <button
+            className="btn rounded-full btn-primary text-white"
+            disabled={isPending}
+          >
             {isPending ? "Logging in..." : "Login"}
           </button>
           {isError && <p className="text-red-500">{error.message}</p>}

@@ -53,6 +53,11 @@ const CreatePost = () => {
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Only JPG, PNG, and JPEG files are allowed!");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         setImg(reader.result);

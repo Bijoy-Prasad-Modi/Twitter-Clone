@@ -1,7 +1,7 @@
 import Notification from "../models/notificationModel.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
 //we gonna be using this function when we visit a user profile, where we see their name, username, member since, number of followers, following etc
 export const getUserProfile = async (req, res) => {
@@ -101,10 +101,7 @@ export const updateUser = async (req, res) => {
     let user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (
-      (!newPassword && currentPassword) ||
-      (!currentPassword && newPassword)
-    ) {
+    if (!currentPassword || !newPassword) {
       return res.status(400).json({
         error: "Please provide both current password and new password",
       });

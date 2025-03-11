@@ -15,7 +15,9 @@ const NotificationPage = () => {
     queryKey: ["notifications"],
     queryFn: async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/notifications`);
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/notifications`
+        );
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Somthing went wrong");
         return data;
@@ -29,9 +31,12 @@ const NotificationPage = () => {
   const { mutate: deleteNotifications } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/notifications`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/notifications`,
+          {
+            method: "DELETE",
+          }
+        );
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Something went wrong");
@@ -63,7 +68,15 @@ const NotificationPage = () => {
               className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a onClick={deleteNotifications}>Delete all notifications</a>
+                <button
+                  onClick={deleteNotifications}
+                  disabled={isPending}
+                  className={`btn btn-error ${
+                    isPending && "opacity-50 cursor-not-allowed"
+                  }`}
+                >
+                  {isPending ? "Deleting..." : "Delete all notifications"}
+                </button>
               </li>
             </ul>
           </div>
