@@ -100,7 +100,6 @@ export const logout = async (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV !== "development",
-      path: "/", //Ensures cookie removal across the entire app
     });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
