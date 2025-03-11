@@ -16,17 +16,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-//Improved CORS Configuration
-const allowedOrigins = [
-  "https://twitter-app-client-live.vercel.app", // Deployed frontend
-  "http://localhost:5173", // Local development
-];
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: process.env.FRONTEND_URL,
     credentials: true, // Allow cookies
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"], // Allow JWT token
   })
 );
