@@ -8,7 +8,7 @@ const useFollow = () => {
     mutationFn: async (userId) => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/users/follow/${userId}`,
+          `/api/users/follow/${userId}`,
           {
             method: "POST",
             credentials: "include",

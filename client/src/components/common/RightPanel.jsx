@@ -12,7 +12,7 @@ const RightPanel = () => {
     queryFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/users/suggested`,
+          "/api/users/suggested",
           {
             credentials: "include",
           }

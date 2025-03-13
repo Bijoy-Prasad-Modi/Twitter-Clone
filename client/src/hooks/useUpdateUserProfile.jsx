@@ -9,7 +9,7 @@ const useUpdateUserProfile = () => {
       mutationFn: async (formData) => {
         try {
           const res = await fetch(
-            `${import.meta.env.VITE_BASE_URL}/api/users/update`,
+            "/api/users/update",
             {
               method: "PUT",
               credentials: "include",

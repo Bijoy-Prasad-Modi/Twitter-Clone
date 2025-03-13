@@ -26,7 +26,7 @@ const Post = ({ post }) => {
     mutationFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/posts/${post._id}`,
+          `/api/posts/${post._id}`,
           {
             method: "DELETE",
             credentials: "include",
@@ -52,7 +52,7 @@ const Post = ({ post }) => {
     mutationFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/posts/like/${post._id}`,
+          `/api/posts/like/${post._id}`,
           {
             method: "POST",
           }
@@ -85,7 +85,7 @@ const Post = ({ post }) => {
     mutationFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/posts/comment/${post._id}`,
+          `/api/posts/comment/${post._id}`,
           {
             method: "POST",
             headers: {

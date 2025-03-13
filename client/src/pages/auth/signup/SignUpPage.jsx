@@ -25,7 +25,7 @@ const SignUpPage = () => {
     mutationFn: async ({ email, username, fullName, password }) => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/auth/signup`,
+          "/api/auth/signup",
           {
             method: "POST",
             headers: {

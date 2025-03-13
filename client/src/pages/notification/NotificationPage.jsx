@@ -16,7 +16,7 @@ const NotificationPage = () => {
     queryFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/notifications`
+          "/api/notifications"
         );
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Somthing went wrong");
@@ -32,7 +32,7 @@ const NotificationPage = () => {
     mutationFn: async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/notifications`,
+          "/api/notifications",
           {
             method: "DELETE",
           }
