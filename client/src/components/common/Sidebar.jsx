@@ -22,9 +22,9 @@ const Sidebar = () => {
             credentials: "include",
           }
         );
+        const data = await res.json();
 
         if (!res.ok) {
-          const data = await res.json();
           throw new Error(data.error || "Something went wrong");
         }
       } catch (error) {
@@ -33,11 +33,12 @@ const Sidebar = () => {
     },
     onSuccess: () => {
       toast.success("Logged out successfully!");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
 
-      setTimeout(() => {
-        queryClient.clear(); // Clear cache to remove user data
-        //navigate("/login"); // Redirect user to login page after logout
-      }, 1000);
+      // setTimeout(() => {
+      //   queryClient.clear(); // Clear cache to remove user data
+      //   navigate("/login"); // Redirect user to login page after logout
+      // }, 1000);
     },
     onError: () => {
       toast.error("Logout failed");
