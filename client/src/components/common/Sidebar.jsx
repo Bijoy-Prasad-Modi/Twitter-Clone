@@ -36,7 +36,7 @@ const Sidebar = () => {
 
       setTimeout(() => {
         queryClient.clear(); // Clear cache to remove user data
-        navigate("/login"); // Redirect user to login page after logout
+        //navigate("/login"); // Redirect user to login page after logout
       }, 1000);
     },
     onError: () => {
