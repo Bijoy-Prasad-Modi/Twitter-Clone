@@ -23,17 +23,14 @@ const LoginPage = () => {
   } = useMutation({
     mutationFn: async ({ username, password }) => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-          }
-        );
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
 
         // Check if response is OK before parsing JSON
         if (!res.ok) {

@@ -13,7 +13,7 @@ import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+//const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -21,13 +21,14 @@ function App() {
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
-        const res = await fetch(
-          `${BASE_URL}/api/auth/me`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const res = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send token from localStorage
+          },
+        });
 
         const data = await res.json();
         if (data.error) return null;

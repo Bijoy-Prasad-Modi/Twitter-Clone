@@ -73,8 +73,10 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: "Invalid username or password" });
     }
 
+    // Generate token and set cookie
     generateTokenAndSetCookie(user._id, res);
 
+    // Convert to object and exclude password
     const { password: _, ...userWithoutPassword } = user.toObject();
 
     res.status(200).json({
@@ -97,9 +99,9 @@ export const logout = async (req, res) => {
     res.cookie("jwt", "", {
       maxAge: 0,
       expires: new Date(0),
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV !== "development",
+      httpOnly: true, // Prevent access via JavaScript
+      sameSite: "strict", // Prevent CSRF attacks
+      secure: process.env.NODE_ENV !== "development", // Use HTTPS in production
     });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {

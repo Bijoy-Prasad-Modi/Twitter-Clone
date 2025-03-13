@@ -1,25 +1,30 @@
-import React from "react";
-import XSvg from "../svgs/X";
-
-import { MdHomeFilled } from "react-icons/md";
-import { IoNotifications } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { BiLogOut } from "react-icons/bi";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
+import XSvg from "../svgs/X";
+import { MdHomeFilled } from "react-icons/md";
+import { IoNotifications } from "react-icons/io5";
+import { FaUser } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
+
 const Sidebar = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`, {
-          method: "POST",
-        });
-        const data = await res.json();
+        const res = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/logout`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
         if (!res.ok) {
+          const data = await res.json();
           throw new Error(data.error || "Something went wrong");
         }
       } catch (error) {
@@ -27,7 +32,12 @@ const Sidebar = () => {
       }
     },
     onSuccess: () => {
-      queryClient.clear();
+      toast.success("Logged out successfully!");
+
+      setTimeout(() => {
+        queryClient.clear(); // Clear cache to remove user data
+        navigate("/login"); // Redirect user to login page after logout
+      }, 1000);
     },
     onError: () => {
       toast.error("Logout failed");
