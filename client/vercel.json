@@ -2,7 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://twitter-clone-c8hr.onrender.com/api/:path*"
+      "destination": "@backend_url/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -15,7 +19,7 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://twitter-app-client-live.vercel.app"
+          "value": "@frontend_url"
         },
         {
           "key": "Access-Control-Allow-Methods",
