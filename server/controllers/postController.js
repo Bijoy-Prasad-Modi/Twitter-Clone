@@ -64,8 +64,9 @@ export const deletePost = async (req, res) => {
 export const commentOnPost = async (req, res) => {
   try {
     const { text } = req.body;
-    const postId = req.params.id;
+    const { id: postId } = req.params;
 
+    // Ensure user is authenticated
     if (!req.user || !req.user._id) {
       return res
         .status(401)
@@ -74,23 +75,39 @@ export const commentOnPost = async (req, res) => {
 
     const userId = req.user._id;
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
+    // Validate comment text
     if (!text?.trim()) {
       return res.status(400).json({ error: "Comment can not be empty" });
     }
 
-    const post = await Post.findById(postId);
+    // Fetch post & user in parallel for better performance
+    const [post, user] = await Promise.all([
+      Post.findById(postId),
+      User.findById(userId),
+    ]);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
 
+    // Add comment to post
     const comment = { user: userId, text: text.trim() };
     post.comments.push(comment);
     await post.save();
+
+    // Notification on comment, Commenter is Not Post Owner
+    if (userId.toString() !== post.user.toString()) {
+      await new Notification({
+        from: userId,
+        to: post.user,
+        type: "comment",
+        post: postId,
+        message: "commented on your post",
+      }).save();
+    }
 
     // Populate user details in response
     const updatedPost = await Post.findById(postId)
@@ -105,7 +122,7 @@ export const commentOnPost = async (req, res) => {
 
     res.status(200).json(updatedPost);
   } catch (error) {
-    console.log("Error in commentOnPost controller: ", error);
+    console.error("Error in commentOnPost controller: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -125,41 +142,43 @@ export const likeUnlikePost = async (req, res) => {
 
     if (userLikedPost) {
       //Unlike post
-      // await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
-      // await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
 
-      // const updatedLikes = post.likes.filter(
-      //   (id) => id.toString() !== userId.toString()
-      // );
-      // res.status(200).json(updatedLikes);
-      await Post.findByIdAndUpdate(
+      const updatedPost = await Post.findByIdAndUpdate(
         postId,
         { $pull: { likes: userId } },
-        { new: true }
+        { new: true, select: "likes" }
       );
+      // Remove postId from user's likedPosts array
+      await User.findByIdAndUpdate(userId, { $pull: { likedPosts: postId } });
+
+      return res.status(200).json(updatedPost.likes);
     } else {
-      //Like post
-      // post.likes.push(userId);
-      // await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
-      // await post.save();
+      // Like post
 
-      // const notification = new Notification({
-      //   from: userId,
-      //   to: post.user,
-      //   type: "like",
-      // });
-      // await notification.save();
+      // Check if user is liking their own post, do NOT create notification
+      const notificationPromise =
+        post.user.toString() !== userId.toString()
+          ? new Notification({
+              from: userId,
+              to: post.user,
+              type: "like",
+            }).save()
+          : Promise.resolve(); // Ensure Promise.all() does not fail by returning a resolved promise
 
-      // const updatedLikes = post.likes;
-      // res.status(200).json(updatedLikes);
-      await Post.findByIdAndUpdate(
-        postId,
-        { $push: { likes: userId } },
-        { new: true }
-      );
+      const [updatedPost] = await Promise.all([
+        Post.findByIdAndUpdate(
+          postId,
+          { $push: { likes: userId } },
+          { new: true, select: "likes" }
+        ),
+        User.updateOne({ _id: userId }, { $push: { likedPosts: postId } }),
+        notificationPromise,
+      ]);
+
+      return res.status(200).json(updatedPost.likes);
     }
   } catch (error) {
-    console.log("Error in likeUnlikePost controller: ", error);
+    console.error("Error in likeUnlikePost controller: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

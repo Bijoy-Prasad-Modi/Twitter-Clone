@@ -10,17 +10,16 @@ import { FaHeart } from "react-icons/fa6";
 
 const NotificationPage = () => {
   //to able to fetch notifications we need to add a query
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
-  const { data: notifications, isLoading } = useQuery({
+  const { data: notifications = [], isLoading } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
       try {
-        const res = await fetch(
-          "/api/notifications"
-        );
+        const res = await fetch("/api/notifications");
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Somthing went wrong");
-        return data;
+        return Array.isArray(data) ? data : []; // Ensure it's always an array
       } catch (error) {
         throw new Error(error);
       }
@@ -28,15 +27,12 @@ const NotificationPage = () => {
   });
 
   //to able to delete notifications we need to add a mutation
-  const { mutate: deleteNotifications } = useMutation({
+  const { mutate: deleteNotifications, isPending } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(
-          "/api/notifications",
-          {
-            method: "DELETE",
-          }
-        );
+        const res = await fetch("/api/notifications", {
+          method: "DELETE",
+        });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Something went wrong");
@@ -86,41 +82,44 @@ const NotificationPage = () => {
             <LoadingSpinner size="lg" />
           </div>
         )}
-        {notifications?.length === 0 && (
+        {notifications.length === 0 && !isLoading && (
           <div className="text-center p-4 font-bold">No notifications 🤔</div>
         )}
-        {notifications?.map((notification) => (
-          <div className="border-b border-gray-700" key={notification._id}>
-            <div className="flex gap-2 p-4">
-              {notification.type === "follow" && (
-                <FaUser className="w-7 h-7 text-primary" />
-              )}
-              {notification.type === "like" && (
-                <FaHeart className="w-7 h-7 text-red-500" />
-              )}
-              <Link to={`/profile/${notification.from.username}`}>
-                <div className="avatar">
-                  <div className="w-8 rounded-full">
-                    <img
-                      src={
-                        notification.from.profileImg ||
-                        "/avatar-placeholder.png"
-                      }
-                    />
-                  </div>
+        {notifications?.map(
+          (notification) =>
+            notification.from._id !== authUser?._id && (
+              <div className="border-b border-gray-700" key={notification._id}>
+                <div className="flex gap-2 p-4">
+                  {notification.type === "follow" && (
+                    <FaUser className="w-7 h-7 text-primary" />
+                  )}
+                  {notification.type === "like" && (
+                    <FaHeart className="w-7 h-7 text-red-500" />
+                  )}
+                  <Link to={`/profile/${notification.from.username}`}>
+                    <div className="avatar">
+                      <div className="w-8 rounded-full">
+                        <img
+                          src={
+                            notification.from.profileImg ||
+                            "/avatar-placeholder.png"
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <span className="font-bold">
+                        @{notification.from.username}
+                      </span>{" "}
+                      {notification.type === "follow"
+                        ? "followed you"
+                        : "liked your post"}
+                    </div>
+                  </Link>
                 </div>
-                <div className="flex gap-1">
-                  <span className="font-bold">
-                    @{notification.from.username}
-                  </span>{" "}
-                  {notification.type === "follow"
-                    ? "followed you"
-                    : "liked your post"}
-                </div>
-              </Link>
-            </div>
-          </div>
-        ))}
+              </div>
+            )
+        )}
       </div>
     </>
   );
