@@ -25,13 +25,10 @@ const Post = ({ post }) => {
   const { mutate: deletePost, isPending: isDeleting } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(
-          `/api/posts/${post._id}`,
-          {
-            method: "DELETE",
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`/api/posts/${post._id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
@@ -43,20 +40,19 @@ const Post = ({ post }) => {
     },
     onSuccess: () => {
       toast.success("Post deleted Successfully");
-      //invalidate the query to refetch the data
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+
+      queryClient.setQueryData(["posts"], (oldData) => {
+        return oldData.filter((p) => p._id !== post._id); // Remove post from cache
+      });
     },
   });
 
   const { mutate: likePost, isPending: isLiking } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(
-          `/api/posts/like/${post._id}`,
-          {
-            method: "POST",
-          }
-        );
+        const res = await fetch(`/api/posts/like/${post._id}`, {
+          method: "POST",
+        });
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
@@ -84,16 +80,13 @@ const Post = ({ post }) => {
   const { mutate: commentPost, isPending: isCommenting } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(
-          `/api/posts/comment/${post._id}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ text: comment }),
-          }
-        );
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
         const data = await res.json();
 
         if (!res.ok) {
@@ -104,10 +97,18 @@ const Post = ({ post }) => {
         throw new Error(error);
       }
     },
-    onSuccess: () => {
+    onSuccess: (updatedPost) => {
       toast.success("Comment posted successfully");
-      setComment("");
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      setComment(""); // Clear input
+
+      queryClient.setQueryData(["posts"], (oldData) => {
+        return oldData.map((p) => {
+          if (p._id === post._id) {
+            return { ...p, comments: updatedPost.comments }; // ✅ Update comments locally
+          }
+          return p;
+        });
+      });
     },
     onError: (error) => {
       toast.error(error.message);

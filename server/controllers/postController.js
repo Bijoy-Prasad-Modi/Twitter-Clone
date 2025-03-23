@@ -104,8 +104,8 @@ export const commentOnPost = async (req, res) => {
         from: userId,
         to: post.user,
         type: "comment",
-        post: postId,
-        message: "commented on your post",
+        post: postId, // Store postId for linking
+        content: text.trim(), // Store actual comment text
       }).save();
     }
 
@@ -141,20 +141,25 @@ export const likeUnlikePost = async (req, res) => {
     const userLikedPost = post.likes.includes(userId);
 
     if (userLikedPost) {
-      //Unlike post
-
+      //Unlike post and remove notification
       const updatedPost = await Post.findByIdAndUpdate(
         postId,
         { $pull: { likes: userId } },
         { new: true, select: "likes" }
       );
+
       // Remove postId from user's likedPosts array
       await User.findByIdAndUpdate(userId, { $pull: { likedPosts: postId } });
 
+      // Remove the like notification from the database
+      await Notification.deleteOne({
+        from: userId,
+        to: post.user,
+        type: "like",
+      });
+
       return res.status(200).json(updatedPost.likes);
     } else {
-      // Like post
-
       // Check if user is liking their own post, do NOT create notification
       const notificationPromise =
         post.user.toString() !== userId.toString()
@@ -165,14 +170,15 @@ export const likeUnlikePost = async (req, res) => {
             }).save()
           : Promise.resolve(); // Ensure Promise.all() does not fail by returning a resolved promise
 
+      // Like post & update user's likedPosts array
       const [updatedPost] = await Promise.all([
         Post.findByIdAndUpdate(
           postId,
           { $push: { likes: userId } },
           { new: true, select: "likes" }
         ),
-        User.updateOne({ _id: userId }, { $push: { likedPosts: postId } }),
-        notificationPromise,
+        User.updateOne({ _id: userId }, { $push: { likedPosts: postId } }), //update user id to the, post's liked array
+        notificationPromise, //send notification on liking post
       ]);
 
       return res.status(200).json(updatedPost.likes);

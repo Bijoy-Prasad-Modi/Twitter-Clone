@@ -9,6 +9,7 @@ export const getNotifications = async (req, res) => {
         path: "from",
         select: "username profileImg",
       })
+      .select("type content post from createdAt")
       .sort({ createdAt: -1 }) // Sort by newest notifications first
       .lean();
 
@@ -17,7 +18,7 @@ export const getNotifications = async (req, res) => {
       { read: true }
     );
 
-    res.status(200).json(notifications, length > 0 ? notifications : []);
+    res.status(200).json(notifications);
   } catch (error) {
     console.error("Error in getNotifications function", error);
     res.status(500).json({ error: "Internal Server Error" });

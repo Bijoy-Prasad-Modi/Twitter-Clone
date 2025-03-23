@@ -1,25 +1,27 @@
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { formatDistanceToNow } from "date-fns";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa6";
+import { FaUser, FaHeart, FaComment } from "react-icons/fa";
+import { RiChat3Line } from "react-icons/ri";
 
 const NotificationPage = () => {
   //to able to fetch notifications we need to add a query
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
-  const { data: notifications = [], isLoading } = useQuery({
+
+  const { data: notifications, isLoading } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
       try {
         const res = await fetch("/api/notifications");
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Somthing went wrong");
-        return Array.isArray(data) ? data : []; // Ensure it's always an array
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+        return data; // Ensure it's always an array
       } catch (error) {
         throw new Error(error);
       }
@@ -82,19 +84,25 @@ const NotificationPage = () => {
             <LoadingSpinner size="lg" />
           </div>
         )}
-        {notifications.length === 0 && !isLoading && (
+        {notifications?.length === 0 && (
           <div className="text-center p-4 font-bold">No notifications 🤔</div>
         )}
         {notifications?.map(
           (notification) =>
             notification.from._id !== authUser?._id && (
-              <div className="border-b border-gray-700" key={notification._id}>
-                <div className="flex gap-2 p-4">
+              <div
+                className="border-b border-gray-700 flex flex-col pb-2"
+                key={notification._id}
+              >
+                <div className="flex gap-2 p-4 pb-1">
                   {notification.type === "follow" && (
                     <FaUser className="w-7 h-7 text-primary" />
                   )}
                   {notification.type === "like" && (
                     <FaHeart className="w-7 h-7 text-red-500" />
+                  )}
+                  {notification.type === "comment" && (
+                    <RiChat3Line className="w-7 h-7 text-gray-300" />
                   )}
                   <Link to={`/profile/${notification.from.username}`}>
                     <div className="avatar">
@@ -110,13 +118,25 @@ const NotificationPage = () => {
                     <div className="flex gap-1">
                       <span className="font-bold">
                         @{notification.from.username}
-                      </span>{" "}
-                      {notification.type === "follow"
-                        ? "followed you"
-                        : "liked your post"}
+                      </span>
+                      {notification.type === "follow" && " followed you"}
+                      {notification.type === "like" && " liked your post"}
+                      {notification.type === "comment" && (
+                        <>
+                          <span> commented on your post</span>
+                          <p className="text-sm text-gray-400 italic">
+                            "{notification.content}"
+                          </p>
+                        </>
+                      )}
                     </div>
                   </Link>
                 </div>
+                <span className="text-xs text-gray-500 pl-14">
+                  {formatDistanceToNow(new Date(notification.createdAt), {
+                    addSuffix: true,
+                  })}
+                </span>
               </div>
             )
         )}

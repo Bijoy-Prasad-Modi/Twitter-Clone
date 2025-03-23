@@ -17,6 +17,14 @@ const notificationSchema = new mongoose.Schema(
       required: true,
       enum: ["follow", "like", "comment", "mention"],
     },
+    post: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post", // ✅ Store post reference for likes/comments
+    },
+    content: {
+      type: String, // ✅ Store actual comment text
+      default: null,
+    },
     read: {
       type: Boolean,
       default: false,
