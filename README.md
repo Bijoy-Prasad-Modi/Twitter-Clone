@@ -52,7 +52,7 @@ cd twitter-clone
 
 ### **2️⃣ Setup the Backend**
 ```sh
-cd backend
+cd server
 npm install  # Install dependencies
 
 # Create a .env file and add the following variables:
@@ -71,7 +71,7 @@ npm run dev
 
 ### **3️⃣ Setup the Frontend**
 ```sh
-cd ../frontend
+cd ../client
 npm install  # Install dependencies
 
 # Create a .env file and add:
