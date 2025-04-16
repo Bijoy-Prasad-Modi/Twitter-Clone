@@ -86,22 +86,32 @@ npm run dev
 ## 🏗️ Project Architecture
 ```
 📦 twitter-clone
- ┣ 📂 backend
- ┃ ┣ 📂 config            # Database & Cloudinary configurations
- ┃ ┣ 📂 controllers       # Route logic (Auth, Post, Notifications, etc.)
+ ┣ 📂 server
+ ┃ ┣ 📂 db               # Database configurations (MongoDB connection)
+ ┃ ┣ 📂 controllers      # Business logic for authentication, posts, notifications
  ┃ ┣ 📂 models           # Mongoose models (User, Post, Notification)
  ┃ ┣ 📂 routes           # API Routes (authRoutes, postRoutes, notificationRoutes)
- ┃ ┣ 📜 server.js        # Express server setup
- ┃ ┣ 📜 .env             # Environment variables
- ┣ 📂 frontend
- ┃ ┣ 📂 src
- ┃ ┃ ┣ 📂 components     # Reusable UI components
+ ┃ ┣ 📂 middleware       # Middleware for authentication & error handling
+ ┃ ┣ 📂 utils            # Utility functions (JWT token generation, date formatting)
+ ┃ ┣ 📜 server.js        # Express server setup & Cloudinary configurations
+ ┃ ┣ 📜 .env             # Environment variables (MongoDB URI, JWT secret, etc.)
+ ┃ ┣ 📜 .gitignore       # Ignore sensitive files in version control
+ ┃ ┗ 📜 package.json     # Backend dependencies & scripts
+ ┣ 📂 client
+ ┃ ┣ 📂 public           # Static assets (logo, icons, etc.)
+ ┃ ┣ 📂 src              # React source code
+ ┃ ┃ ┣ 📂 components     # Reusable UI components (Sidebar, Post, Modal)
  ┃ ┃ ┣ 📂 pages          # Page components (Home, Profile, Notifications)
- ┃ ┃ ┣ 📂 hooks          # Custom React hooks
- ┃ ┃ ┣ 📂 utils          # Utility functions (date formatting, API calls)
- ┃ ┃ ┣ 📜 App.jsx        # Main React component
- ┃ ┣ 📜 .env             # Frontend environment variables
- ┃ ┣ 📜 vite.config.js   # Vite configuration
+ ┃ ┃ ┣ 📂 hooks          # Custom React hooks (useAuth, useFetch)
+ ┃ ┃ ┣ 📂 utils          # Utility functions (API calls, date formatting)
+ ┃ ┃ ┣ 📜 App.jsx        # Main React component with routing
+ ┃ ┃ ┣ 📜 main.jsx       # Entry point for React app
+ ┃ ┃ ┣ 📜 index.css      # Global styles
+ ┃ ┣ 📜 .env             # Frontend environment variables (API URLs)
+ ┃ ┣ 📜 .gitignore       # Ignore unnecessary files
+ ┃ ┣ 📜 vercel.json      # Vercel deployment configuration
+ ┃ ┣ 📜 vite.config.js   # Vite project configuration
+ ┃ ┗ 📜 package.json     # Frontend dependencies & scripts
  ┗ 📜 README.md          # Project documentation
 ```
 
