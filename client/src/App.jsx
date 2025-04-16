@@ -9,7 +9,6 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
 
-import { baseURL } from "../src/constants/index.js";
 
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -23,12 +22,12 @@ function App() {
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
-        const res = await fetch(`${baseURL}/api/auth/me`, {
+        const res = await fetch("/api/auth/me", {
           method: "GET",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${get().token}`, // ✅ Send token from localStorage
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send token from localStorage
           },
         });
 

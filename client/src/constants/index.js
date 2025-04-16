@@ -1,1 +1,0 @@
-export const baseURL = "https://twitter-clone-c8hr.onrender.com"
