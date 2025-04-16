@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { baseURL } from "../../../constants/index.js";
 
 import XSvg from "../../../components/svgs/X";
 
@@ -23,7 +24,7 @@ const LoginPage = () => {
   } = useMutation({
     mutationFn: async ({ username, password }) => {
       try {
-        const res = await fetch("/api/auth/login", {
+        const res = await fetch(`${baseURL}/api/auth/login`, {
           method: "POST",
           credentials: "include",
           headers: {

@@ -3,12 +3,16 @@ import jwt from "jsonwebtoken";
 
 export const protectRoute = async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
+    const token =
+      req.cookies.jwt ||
+      req.header("Authorization").replace("Bearer ", "") ||
+      req.body.token; // finding the token from cookies or header or body;
+      
     if (!token) {
       return res.status(401).json({ error: "Unauthorized: No Token Provided" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); //decode the token
 
     if (!decoded) {
       return res.status(401).json({ error: "Unauthorized: Invalid Token" });
